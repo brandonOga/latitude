@@ -4,6 +4,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
+import { preloaderDone } from "@/lib/preloader";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
 
@@ -185,7 +186,9 @@ function revealGroup(group: HTMLElement) {
     timer = setTimeout(build, 200);
   };
 
-  document.fonts.ready.then(() => {
+  // Also wait for the preloader, so nothing plays hidden behind it; entrance
+  // groups then start as its panel lifts
+  Promise.all([document.fonts.ready, preloaderDone]).then(() => {
     if (alive) build();
   });
   window.addEventListener("resize", onResize);

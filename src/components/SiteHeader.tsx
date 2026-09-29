@@ -16,6 +16,26 @@ export default function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   // href of the section currently in view, or null above the first one
   const [active, setActive] = useState<string | null>(null);
+  // Mobile menu (below the desktop breakpoint)
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // While the mobile menu is open: lock page scroll, close on Escape, and
+  // close if the window grows past the desktop breakpoint
+  useEffect(() => {
+    if (!menuOpen) return;
+    const html = document.documentElement;
+    html.classList.add("menu-open");
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenuOpen(false);
+    const desktop = window.matchMedia("(min-width: 1200px)");
+    const onChange = () => desktop.matches && setMenuOpen(false);
+    window.addEventListener("keydown", onKey);
+    desktop.addEventListener("change", onChange);
+    return () => {
+      html.classList.remove("menu-open");
+      window.removeEventListener("keydown", onKey);
+      desktop.removeEventListener("change", onChange);
+    };
+  }, [menuOpen]);
 
   useEffect(() => {
     const update = () => {
@@ -46,7 +66,13 @@ export default function SiteHeader() {
 
   return (
     <header
-      className={scrolled ? "site-header is-scrolled" : "site-header"}
+      className={[
+        "site-header",
+        scrolled && "is-scrolled",
+        menuOpen && "is-menu-open",
+      ]
+        .filter(Boolean)
+        .join(" ")}
       data-reveal-group="entrance"
     >
       <div className="container header-inner">
@@ -76,9 +102,53 @@ export default function SiteHeader() {
             </a>
           ))}
         </nav>
-        <Button href="#contact" size="sm" data-reveal="down">
+        <Button
+          href="#contact"
+          size="sm"
+          className="header-cta"
+          data-reveal="down"
+        >
           Book a consultation
         </Button>
+
+        {/* Mobile only: opens the menu panel */}
+        <button
+          type="button"
+          className="menu-toggle"
+          aria-expanded={menuOpen}
+          aria-controls="mobile-menu"
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          onClick={() => setMenuOpen((open) => !open)}
+          data-reveal="down"
+        >
+          <span className="menu-toggle-bar" />
+          <span className="menu-toggle-bar" />
+          <span className="menu-toggle-bar" />
+        </button>
+      </div>
+
+      {/* Mobile menu panel; inert while closed so it can't be tabbed into */}
+      <div id="mobile-menu" className="mobile-menu" inert={!menuOpen}>
+        <nav className="container mobile-nav" aria-label="Mobile">
+          {NAV.map(({ label, href }) => (
+            <a
+              key={href}
+              href={href}
+              className={href === active ? "is-active" : undefined}
+              aria-current={href === active ? "location" : undefined}
+              onClick={() => setMenuOpen(false)}
+            >
+              {label}
+            </a>
+          ))}
+          <Button
+            href="#contact"
+            className="mobile-cta"
+            onClick={() => setMenuOpen(false)}
+          >
+            Book a consultation
+          </Button>
+        </nav>
       </div>
     </header>
   );
