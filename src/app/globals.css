@@ -16,6 +16,9 @@
   --body: #2e3748;
 
   --heading: var(--font-heading), var(--font-body), sans-serif;
+  /* The single switch for heading weight: 900 = Satoshi Black, 500 = Satoshi
+     Medium. Everything set in the heading font follows it. */
+  --heading-weight: 900;
   --body: var(--font-body), Helvetica, Arial, sans-serif;
   --mono: var(--font-mono), monospace;
 
@@ -70,7 +73,7 @@
 /* Desktop */
 @media (min-width: 1200px) {
   :root {
-    --fs-h1: 64px;
+    --fs-h1: 55px;
     --fs-h2: 44px;
     --fs-h3: 38px;
     --fs-h4: 26px;
@@ -86,7 +89,7 @@
 html {
   scroll-behavior: smooth;
   /* Stop anchor links landing underneath the sticky header */
-  scroll-padding-top: 80px;
+  scroll-padding-top: 110px;
 }
 
 body {
@@ -132,7 +135,7 @@ h5, .h5,
 h6, .h6 {
   margin: 0;
   font-family: var(--heading);
-  font-weight: 500;
+  font-weight: var(--heading-weight);
   text-transform: uppercase;
   text-wrap: balance;
 }
@@ -200,25 +203,42 @@ html.is-loading {
   z-index: 100;
   display: grid;
   place-items: center;
-  background: var(--navy);
+  /* Same light blue-tinted background as the page */
+  background: var(--paper);
 }
 
-.preloader-word {
+/* Always two centred lines ("Latitude Zimbabwe" / "Financial Advisory"),
+   sized off the screen width so the longer line always fits */
+.preloader-text {
   display: flex;
-  overflow: hidden;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1em;
   font-family: var(--heading);
-  font-weight: 500;
-  font-size: clamp(3rem, 12vw, 9rem);
+  font-weight: var(--heading-weight);
+  font-size: clamp(1.5rem, 7vw, 5.5rem);
   line-height: 1;
   letter-spacing: 0.02em;
 }
 
-/* Faint letter underneath; the gold copy in ::before is clipped from the
+.preloader-line {
+  display: flex;
+  gap: 0.3em;
+  white-space: nowrap;
+}
+
+/* Each word is its own mask, so letters rise into it from below */
+.preloader-word {
+  display: flex;
+  overflow: hidden;
+}
+
+/* Faint letter underneath; the blue copy in ::before is clipped from the
    bottom up via --clip, which GSAP animates */
 .preloader-letter {
   position: relative;
   display: inline-block;
-  color: rgba(255, 255, 255, 0.15);
+  color: rgba(11, 31, 63, 0.12);
   transform: translateY(100%);
   --clip: inset(100% 0% 0% 0%);
 }
@@ -227,7 +247,7 @@ html.is-loading {
   content: attr(data-letter);
   position: absolute;
   inset: 0;
-  color: var(--gold);
+  color: var(--navy-2);
   clip-path: var(--clip);
 }
 
@@ -282,8 +302,9 @@ h6 em, .h6 em {
   object-fit: cover;
 }
 
+/* Symmetrical boardroom: keep the table and screen centred */
 .hero-img {
-  object-position: 62% 40%;
+  object-position: 50% 55%;
 }
 
 .about-img {
@@ -294,8 +315,9 @@ h6 em, .h6 em {
   object-position: 60% 30%;
 }
 
+/* Keep the consultant and her chart in frame */
 .panel-img--actuarial {
-  object-position: 55% 50%;
+  object-position: 40% 45%;
 }
 
 .panel-img--it {
@@ -356,17 +378,19 @@ h6 em, .h6 em {
   color: var(--navy);
 }
 
+/* Frosted glass: see-through tint with the photo behind it blurred, no
+   visible border (it stays transparent, so the button keeps its size) */
 .btn--outline {
-  background: transparent;
-  border-color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   color: #fff;
 }
 
 .btn--outline:hover {
-  background: #fff;
+  background: var(--gold);
   color: var(--navy);
 }
-
 /* ---------- Header ---------- */
 
 /* Sticky, solid header that tightens up once scrolling starts */
@@ -377,89 +401,79 @@ h6 em, .h6 em {
   background: #fff;
 }
 
-.site-header.is-scrolled .header-inner {
-  padding-block: 8px;
+/* The header bar is sized by the nav and button only; the logo hangs from its
+   top edge as a tab and overlaps the top of the hero. Change the sizes here. */
+.site-header {
+  --header-pad: 20px;
+  --logo-size: 120px;
+  --logo-pad-x: 20px; /* white space either side of the logo */
+}
+
+.site-header.is-scrolled {
+  --logo-size: 88px;
+  --logo-pad-x: 12px;
+}
+
+@media (max-width: 639px) {
+  .site-header {
+    --logo-size: 96px;
+    --logo-pad-x: 12px;
+  }
+
+  .site-header.is-scrolled {
+    --logo-size: 64px;
+    --logo-pad-x: 8px;
+  }
 }
 
 .header-inner {
-  padding-block: 20px;
-  transition: padding-block 0.3s ease;
+  padding-block: var(--header-pad);
   display: flex;
+
   align-items: center;
   justify-content: space-between;
   gap: 24px;
   flex-wrap: wrap;
 }
 
+/* A slot the width of the logo that doesn't add to the header's height */
 .brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  position: relative;
+  flex-shrink: 0;
+  align-self: stretch;
+  width: calc(var(--logo-size) + 2 * var(--logo-pad-x));
   color: var(--navy);
+  transition: width 0.3s ease;
 }
 
 .brand:hover {
   text-decoration: none;
 }
 
+/* Square stacked lockup (mark + name + tagline in one image). Hangs from the
+   header's top edge and overflows below it, over the hero. */
 .logo {
-  height: 50px;
-  width: auto;
-  mix-blend-mode: multiply;
-  transition: height 0.3s ease;
-}
-
-.site-header.is-scrolled .logo {
-  height: 36px;
-}
-
-.brand-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
-}
-
-.brand-name {
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--navy);
-}
-
-.brand-sub {
-  font-family: var(--mono);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--gold-ink);
-}
-
-/* Phones: a smaller mark and tagline so the brand fits beside the menu button */
-@media (max-width: 639px) {
-  .logo {
-    height: 40px;
-  }
-
-  .site-header.is-scrolled .logo {
-    height: 32px;
-  }
-
-  .brand {
-    gap: 10px;
-  }
-
-  .brand-sub {
-    font-size: 10px;
-    letter-spacing: 0.1em;
-  }
-
-  .header-inner {
-    padding-block: 12px;
-  }
+  position: absolute;
+  top: calc(-1 * var(--header-pad));
+  left: 0;
+  /* Widened by the side padding so the image itself stays square */
+  width: calc(var(--logo-size) + 2 * var(--logo-pad-x));
+  height: var(--logo-size);
+  padding-inline: var(--logo-pad-x);
+  background: #fff;
+  transition: width 0.3s ease, height 0.3s ease;
 }
 
 .nav {
   display: flex;
   gap: 30px;
   flex-wrap: wrap;
+}
+
+/* All header text (links and buttons, desktop and mobile) at normal weight */
+.site-header,
+.site-header .btn {
+  font-weight: 400;
 }
 
 .nav a {
@@ -541,14 +555,12 @@ h6 em, .h6 em {
   padding-bottom: 28px;
 }
 
+/* Body font, like the desktop nav: Satoshi only ships 500 and 900, so it
+   can't do a normal weight */
 .mobile-nav a:not(.btn) {
   padding: 16px 0;
   border-bottom: 1px solid var(--rule);
-  font-family: var(--heading);
   font-size: var(--fs-h5);
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
   color: var(--navy);
 }
 
@@ -591,9 +603,14 @@ html.menu-open {
 
 /* ---------- Hero ---------- */
 
+/* Fills the screen below the header. --header-h is measured once on load
+   by SiteHeader; 85px is the fallback until then. svh is the viewport
+   height with mobile browser bars showing, and it never changes as they
+   hide, so the hero doesn't jump. min-height lets content grow it on very
+   short screens. */
 .hero {
   position: relative;
-  min-height: min(86vh, 820px);
+  min-height: calc(100svh - var(--header-h, 85px));
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -614,7 +631,7 @@ html.menu-open {
 }
 
 .hero-title {
-  max-width: 960px;
+  max-width: 1140px;
   color: #fff;
 }
 
@@ -734,7 +751,8 @@ html.menu-open {
   border-radius: var(--tab-r) var(--tab-r) 0 0;
   font: inherit;
   font-weight: 400;
-  padding: 15px 40px;
+  /* Same 9px block padding as the header CTA (.btn--sm) */
+  padding: 9px 40px;
   margin-bottom: -1px;
   cursor: pointer;
   z-index: 0;
@@ -801,6 +819,8 @@ html.menu-open {
 
 .panel-cta {
   margin-top: 36px;
+  /* Same 9px block padding as the header CTA (.btn--sm) */
+  padding-block: 9px;
 }
 
 .panel-grid {
@@ -840,7 +860,7 @@ html.menu-open {
     flex: 1 1 0;
     min-width: 0;
     justify-content: center;
-    padding: 12px 8px;
+    padding: 9px 8px;
     font-size: 15px;
   }
 
@@ -1052,21 +1072,26 @@ html.menu-open {
 
 /* ---------- Enquiry form ---------- */
 
+/* Frosted glass over the dark contact section, matching the contact cards:
+   a faint tint with the photo behind it blurred, light text, and dark native
+   controls (select arrow, dropdown list, autofill) */
 .enquiry {
-  background: #fff;
-  padding: clamp(28px, 4vw, 48px);
   display: flex;
   flex-direction: column;
   gap: 20px;
+  padding: clamp(24px, 3vw, 36px);
   border-radius: 14px;
-  color: var(--navy);
-  box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: #fff;
+  color-scheme: dark;
 }
 
 .enquiry-fields {
   display: flex;
   flex-direction: column;
-  gap: 36px;
+  gap: 20px;
 }
 
 .field {
@@ -1079,50 +1104,99 @@ html.menu-open {
 .field-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
-  gap: 36px 24px;
+  gap: 20px 24px;
 }
 
 .field input::placeholder,
 .field textarea::placeholder {
-  color: #6b7389;
+  color: rgba(255, 255, 255, 0.6);
   opacity: 1;
 }
 
-/* Grey the select like a placeholder until a real option is chosen */
+/* Dim the select like a placeholder until a real option is chosen */
 .field select:invalid {
-  color: #6b7389;
+  color: rgba(255, 255, 255, 0.6);
 }
 
+/* The open list: solid navy with full-white options. Set explicitly so the
+   options don't inherit the dimmed placeholder colour above. */
 .field select option {
-  color: var(--navy);
+  background: var(--navy);
+  color: #fff;
+}
+
+/* The "Area of interest" prompt can't be picked, so it stays dimmed */
+.field select option:disabled {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Browsers that allow a fully styled dropdown (Chrome/Edge 135+): the open
+   list becomes a see-through, blurred navy panel like the form. Elsewhere
+   the solid navy list above is used. */
+@supports (appearance: base-select) {
+  .field select,
+  .field select::picker(select) {
+    appearance: base-select;
+  }
+
+  .field select::picker(select) {
+    margin-top: 6px;
+    padding: 6px;
+    border: none;
+    border-radius: 12px;
+    background: rgba(11, 31, 63, 0.55);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    color: #fff;
+  }
+
+  .field select option {
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: transparent;
+  }
+
+  .field select option:hover,
+  .field select option:focus-visible {
+    background: rgba(255, 255, 255, 0.14);
+  }
 }
 
 .field input,
 .field select,
 .field textarea {
   border: none;
-  border-bottom: 1px solid #98a0b3;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 0;
   background: transparent;
-  padding: 10px 0;
+  padding: 8px 0;
   font: inherit;
   font-weight: 300;
   outline: none;
-  color: var(--navy);
+  color: #fff;
 }
 
 .field input:focus,
 .field select:focus,
 .field textarea:focus {
-  border-bottom-color: var(--navy);
+  border-bottom-color: #fff;
 }
 
 .field textarea {
   resize: vertical;
 }
 
+/* Gold by default, the light blue on hover (the reverse of other primary
+   buttons) */
 .enquiry-submit {
   margin-top: 8px;
+  background: var(--gold);
+  color: var(--navy);
+}
+
+.enquiry-submit:hover {
+  background: var(--navy-2);
+  color: #fff;
 }
 
 .enquiry-thanks {
@@ -1135,7 +1209,7 @@ html.menu-open {
 }
 
 .enquiry-thanks-body {
-  color: #56607a;
+  color: rgba(255, 255, 255, 0.75);
 }
 
 /* ---------- Footer ---------- */
@@ -1148,8 +1222,9 @@ html.menu-open {
   color: #fff;
 }
 
+/* Keep the person (just left of centre) in frame */
 .footer-bg {
-  object-position: 60% 30%;
+  object-position: 45% 30%;
 }
 
 .footer-scrim {
@@ -1161,11 +1236,14 @@ html.menu-open {
 .footer-content {
   position: relative;
   padding-top: clamp(72px, 9vw, 120px);
-  padding-bottom: clamp(72px, 9vw, 120px);
+  padding-bottom: clamp(48px, 5vw, 72px);
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
-  gap: clamp(40px, 6vw, 96px);
-  align-items: start;
+  column-gap: clamp(40px, 6vw, 96px);
+  /* Only applies once the form stacks under the contact column (mobile and
+     narrow tablets); side by side there's a single row */
+  row-gap: 72px;
+  align-items: center;
 }
 
 .footer-title {

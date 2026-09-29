@@ -20,8 +20,8 @@ export default function Home() {
         data-reveal-delay="0.2"
       >
         <Image
-          src="/assets/photo-hero.jpg"
-          alt="Consultant working at a laptop in a modern office"
+          src="/assets/boardroom.jpg"
+          alt="Modern boardroom with a long conference table and leather chairs"
           fill
           priority
           sizes="100vw"
@@ -30,15 +30,15 @@ export default function Home() {
         />
         <div className="hero-scrim" />
         <div className="container hero-inner flex flex-col gap-10">
-          <h1 className="hero-title" data-reveal="mask" data-reveal-at="0.5">
-            Navigate Complexity with Clarity for Smarter, Sustainable Growth
-          </h1>
-          {/*
-          <p className="hero-lede">
-            From finance to IT solutions and actuarial services, we deliver
-            insights that drive smarter decisions.
-          </p>]
-          */}
+          <div>
+            <h1 className="hero-title" data-reveal="mask" data-reveal-at="0.5">
+              Navigate Complexity with Clarity for Smarter, Sustainable Growth
+            </h1>
+            <p className="hero-lede">
+              From finance to IT solutions and actuarial services, we deliver
+              insights that drive smarter decisions.
+            </p>
+          </div>
           <div className="hero-actions">
             <Button
               href="#services"
@@ -94,7 +94,7 @@ export default function Home() {
               </p>
               <p data-reveal>
                 With a commitment to excellence, integrity, and innovation,
-                Latitude Financial Advisory is more than a consultancy — we are
+                Latitude Financial Advisory is more than a consultancy. We are
                 your strategic ally in building resilience and achieving
                 long-term success.
               </p>

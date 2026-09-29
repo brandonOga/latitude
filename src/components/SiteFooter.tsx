@@ -2,7 +2,6 @@ import Image from "next/image";
 import {
   FaEnvelope,
   FaFacebookF,
-  FaInstagram,
   FaLinkedinIn,
   FaLocationDot,
   FaPhoneVolume,
@@ -42,7 +41,6 @@ const CHANNELS = [
 const SOCIALS = [
   { icon: FaFacebookF, label: "Facebook", href: "#" },
   { icon: FaXTwitter, label: "X", href: "#" },
-  { icon: FaInstagram, label: "Instagram", href: "#" },
   { icon: FaLinkedinIn, label: "LinkedIn", href: "#" },
 ];
 
@@ -51,7 +49,7 @@ export default function SiteFooter() {
     <footer className="site-footer">
       <div id="contact" className="footer-main" data-reveal-group>
         <Image
-          src="/assets/photo-finance.jpg"
+          src="/assets/contact-2.jpg"
           alt=""
           fill
           sizes="100vw"

@@ -18,7 +18,7 @@ export const SERVICES: Service[] = [
     items: [
       "Financial Planning & Budgeting",
       "Tax Advisory & Compliance",
-      "Audit & Assurance Services — Internal Audits",
+      "Audit & Assurance Services: Internal Audits",
       "Investment Advisory",
       "Corporate Finance Advisory",
       "Business Performance, Strategy Consulting & Capacity Building",
@@ -27,8 +27,8 @@ export const SERVICES: Service[] = [
   {
     key: "actuarial",
     title: "Actuarial Services",
-    img: "/assets/photo-actuarial.jpg",
-    alt: "Two analysts reviewing data on a laptop",
+    img: "/assets/actuarial.jpg",
+    alt: "Consultant presenting a data chart to a client across a desk",
     intro:
       "Actuarial precision applied to forecast, quantify and safeguard the future of your organisation.",
     items: [
@@ -46,7 +46,7 @@ export const SERVICES: Service[] = [
     img: "/assets/photo-office.jpg",
     alt: "Modern office workstations",
     intro:
-      "User interfaces and responsive websites — from wireframes to high-fidelity mocks and prototypes.",
+      "User interfaces and responsive websites, from wireframes to high-fidelity mocks and prototypes.",
     items: [
       "Design wireframes, user flows and interactive prototypes in Figma to explore and communicate ideas.",
       "Build responsive websites using WordPress, Elementor, HTML, CSS, JavaScript and other front-end technologies.",
@@ -56,36 +56,35 @@ export const SERVICES: Service[] = [
   },
 ];
 
-// TODO: replace the placeholder photos with industry-specific images,
-// and review the descriptions.
+// TODO: review the descriptions.
 export const INDUSTRIES = [
   {
     name: "Financial Services",
-    img: "/assets/photo-finance.jpg",
+    img: "/assets/financial-services.jpg",
     description:
       "Risk, regulatory reporting and actuarial support for banks, insurers, pension funds and microfinance institutions.",
   },
   {
     name: "Technology, Media & Telecoms",
-    img: "/assets/photo-office.jpg",
+    img: "/assets/technology.jpg",
     description:
       "Financial planning, systems implementation and growth strategy for fast-moving tech and telecoms businesses.",
   },
   {
     name: "Real Estate, Building & Infrastructure",
-    img: "/assets/photo-contact.jpg",
+    img: "/assets/real-estate.jpg",
     description:
       "Project finance, feasibility studies and valuations that keep developments and infrastructure on a sound footing.",
   },
   {
     name: "Energy & Resources",
-    img: "/assets/photo-actuarial.jpg",
+    img: "/assets/energy-resources.jpg",
     description:
       "Modelling, cost control and risk management for mining, energy and agricultural operations.",
   },
   {
     name: "Government & Public Sector",
-    img: "/assets/photo-team.jpg",
+    img: "/assets/government.jpg",
     description:
       "Public finance management, digital transformation and pension scheme advisory for public institutions.",
   },

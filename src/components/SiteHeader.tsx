@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "@/components/Button";
 
 const NAV = [
@@ -18,6 +18,17 @@ export default function SiteHeader() {
   const [active, setActive] = useState<string | null>(null);
   // Mobile menu (below the desktop breakpoint)
   const [menuOpen, setMenuOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
+
+  // Measure the header once on load and expose it as --header-h, so the hero
+  // can fill the rest of the screen. The bar's height doesn't change on
+  // scroll (only the hanging logo shrinks), so there's no need to re-measure.
+  useEffect(() => {
+    const height = headerRef.current?.offsetHeight;
+    if (height) {
+      document.documentElement.style.setProperty("--header-h", `${height}px`);
+    }
+  }, []);
 
   // While the mobile menu is open: lock page scroll, close on Escape, and
   // close if the window grows past the desktop breakpoint
@@ -66,6 +77,7 @@ export default function SiteHeader() {
 
   return (
     <header
+      ref={headerRef}
       className={[
         "site-header",
         scrolled && "is-scrolled",
@@ -76,19 +88,17 @@ export default function SiteHeader() {
       data-reveal-group="entrance"
     >
       <div className="container header-inner">
+        {/* The logo image already includes the name and tagline */}
         <a href="#top" className="brand" data-reveal="down">
           <Image
-            src="/assets/latitude-mark.png"
-            alt="Latitude logo"
-            width={80}
-            height={80}
+            src="/assets/latitude-logo.jpeg"
+            alt="Latitude Zimbabwe Financial Advisory"
+            width={1254}
+            height={1254}
+            sizes="150px"
             className="logo"
             priority
           />
-          <div className="brand-text">
-            <span className="brand-name h6">Latitude</span>
-            <span className="brand-sub">Zimbabwe Financial Advisory</span>
-          </div>
         </a>
         <nav className="nav" data-reveal="down">
           {NAV.map(({ label, href }) => (

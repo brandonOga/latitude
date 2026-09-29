@@ -3,11 +3,14 @@ import { IBM_Plex_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 
+// Both Satoshi weights are registered as one family; which one headings use
+// is set once by --heading-weight in globals.css
 const satoshi = localFont({
   variable: "--font-heading",
-  src: "../fonts/Satoshi Medium/Satoshi Medium.woff2",
-  weight: "500",
-  style: "normal",
+  src: [
+    { path: "../fonts/Satoshi Medium/Satoshi Medium.woff2", weight: "500", style: "normal" },
+    { path: "../fonts/Satoshi-Black.woff2", weight: "900", style: "normal" },
+  ],
 });
 
 const workSans = localFont({
@@ -26,7 +29,7 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "Latitude Zimbabwe Financial Advisory",
   description:
-    "Finance, IT Solutions and Actuarial Services — insights that drive smarter decisions and sustainable growth.",
+    "Finance, IT Solutions and Actuarial Services, with insights that drive smarter decisions and sustainable growth.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -101,7 +101,7 @@ export default function ContactForm() {
           </label>
           <label className="field">
             <span className="sr-only">How can we help?</span>
-            <textarea name="message" rows={4} placeholder="How can we help?" />
+            <textarea name="message" rows={3} placeholder="How can we help?" />
           </label>
           <Button type="submit" className="enquiry-submit">
             Send enquiry
