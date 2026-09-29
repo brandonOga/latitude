@@ -46,6 +46,15 @@
   --lh-h6: 1.3;
 }
 
+/* Phones: narrower gutters and tighter section spacing */
+@media (max-width: 639px) {
+  :root {
+    --gutter: 20px;
+    --section-pad: 56px;
+    --section-pad-lg: 56px;
+  }
+}
+
 /* Tablet */
 @media (min-width: 768px) {
   :root {
@@ -175,6 +184,61 @@ h6, .h6 {
 @media (prefers-reduced-motion: reduce) {
   [data-reveal] {
     visibility: visible;
+  }
+}
+
+/* ---------- Preloader (Preloader.tsx) ---------- */
+
+/* No scrolling while the loading screen is up */
+html.is-loading {
+  overflow: hidden;
+}
+
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: var(--navy);
+}
+
+.preloader-word {
+  display: flex;
+  overflow: hidden;
+  font-family: var(--heading);
+  font-weight: 500;
+  font-size: clamp(3rem, 12vw, 9rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+/* Faint letter underneath; the gold copy in ::before is clipped from the
+   bottom up via --clip, which GSAP animates */
+.preloader-letter {
+  position: relative;
+  display: inline-block;
+  color: rgba(255, 255, 255, 0.15);
+  transform: translateY(100%);
+  --clip: inset(100% 0% 0% 0%);
+}
+
+.preloader-letter::before {
+  content: attr(data-letter);
+  position: absolute;
+  inset: 0;
+  color: var(--gold);
+  clip-path: var(--clip);
+}
+
+/* Reduced motion: no loading screen at all, even before JavaScript runs */
+@media (prefers-reduced-motion: reduce) {
+  .preloader {
+    display: none;
+  }
+
+  html.is-loading {
+    overflow: auto;
   }
 }
 
@@ -368,6 +432,30 @@ h6 em, .h6 em {
   color: var(--gold-ink);
 }
 
+/* Phones: a smaller mark and tagline so the brand fits beside the menu button */
+@media (max-width: 639px) {
+  .logo {
+    height: 40px;
+  }
+
+  .site-header.is-scrolled .logo {
+    height: 32px;
+  }
+
+  .brand {
+    gap: 10px;
+  }
+
+  .brand-sub {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+
+  .header-inner {
+    padding-block: 12px;
+  }
+}
+
 .nav {
   display: flex;
   gap: 30px;
@@ -385,6 +473,120 @@ h6 em, .h6 em {
   text-decoration: underline;
   text-decoration-thickness: 3px;
   text-underline-offset: 6px;
+}
+
+/* ---------- Mobile menu (below 1200px) ---------- */
+
+/* Hamburger; the three bars fold into an X when open */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 0 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.menu-toggle-bar {
+  display: block;
+  height: 2px;
+  background: var(--navy);
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.2s ease;
+}
+
+.is-menu-open .menu-toggle-bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.is-menu-open .menu-toggle-bar:nth-child(2) {
+  opacity: 0;
+}
+
+.is-menu-open .menu-toggle-bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Drops down from under the header */
+.mobile-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: calc(100dvh - 100%);
+  overflow-y: auto;
+  background: #fff;
+  box-shadow: 0 24px 40px -24px rgba(11, 31, 63, 0.35);
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s linear 0.25s;
+}
+
+.is-menu-open .mobile-menu {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.mobile-nav {
+  display: flex;
+  flex-direction: column;
+  padding-top: 8px;
+  padding-bottom: 28px;
+}
+
+.mobile-nav a:not(.btn) {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--heading);
+  font-size: var(--fs-h5);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+
+.mobile-nav a.is-active {
+  color: var(--navy-2);
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 6px;
+}
+
+.mobile-cta {
+  margin-top: 28px;
+}
+
+/* Page stays put behind the open menu */
+html.menu-open {
+  overflow: hidden;
+}
+
+@media (max-width: 1199px) {
+  .nav,
+  .header-cta {
+    display: none;
+  }
+
+  .menu-toggle {
+    display: flex;
+  }
+
+  .header-inner {
+    flex-wrap: nowrap;
+  }
+}
+
+@media (min-width: 1200px) {
+  .mobile-menu {
+    display: none;
+  }
 }
 
 /* ---------- Hero ---------- */
@@ -444,10 +646,12 @@ h6 em, .h6 em {
   container-type: inline-size;
 }
 
+/* Stacked layout: a landscape crop so the photo doesn't fill a whole phone
+   screen; portrait 4:5 only once it sits beside the text */
 .about-photo {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 4 / 3;
 }
 
 /* Two columns: photo bleeds to the left viewport edge, height stays tied to the column */
@@ -611,6 +815,42 @@ h6 em, .h6 em {
   height: 450px;
   border-radius: calc(var(--panel-r) - 8px);
   overflow: hidden;
+}
+
+/* Tablet: shorter image once the panel stacks */
+@media (max-width: 959px) {
+  .panel-media {
+    height: 340px;
+  }
+}
+
+/* Phones: tabs shrink to fit three across ("Finance", "Actuarial", "IT"),
+   smaller corner radii leave them more room, and the image gets shorter */
+@media (max-width: 639px) {
+  .services {
+    --panel-r: 16px;
+    --tab-r: 12px;
+  }
+
+  .tabs {
+    gap: 6px;
+  }
+
+  .tab {
+    flex: 1 1 0;
+    min-width: 0;
+    justify-content: center;
+    padding: 12px 8px;
+    font-size: 15px;
+  }
+
+  .tab-suffix {
+    display: none;
+  }
+
+  .panel-media {
+    height: 240px;
+  }
 }
 
 .offer-list {
@@ -901,7 +1141,7 @@ h6 em, .h6 em {
 /* ---------- Footer ---------- */
 
 .footer-main {
-  margin-top: 80px;
+  margin-top: var(--section-pad);
   position: relative;
   overflow: hidden;
   background: var(--navy);

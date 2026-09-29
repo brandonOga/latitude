@@ -28,7 +28,13 @@ export default function ServicesTabs() {
             >
               <span className="tab-curve tab-curve--l" />
               <span className="tab-curve tab-curve--r" />
-              <span className="tab-label">{s.title}</span>
+              <span className="tab-label">
+                {/* " Services" is hidden on phones so all three tabs fit */}
+                {s.title.replace(/ Services$/, "")}
+                {s.title.endsWith(" Services") && (
+                  <span className="tab-suffix"> Services</span>
+                )}
+              </span>
             </button>
           );
         })}

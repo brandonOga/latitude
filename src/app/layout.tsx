@@ -33,12 +33,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${satoshi.variable} ${workSans.variable} ${plexMono.variable}`}
+      // is-loading locks scrolling until the Preloader finishes and removes it
+      className={`${satoshi.variable} ${workSans.variable} ${plexMono.variable} is-loading`}
     >
       <head>
-        {/* Without JavaScript the line reveal never runs, so show the text */}
+        {/* Without JavaScript the preloader and reveals never run, so skip
+            the loading screen and show everything */}
         <noscript>
-          <style>{`[data-reveal] { visibility: visible; }`}</style>
+          <style>{`
+            [data-reveal] { visibility: visible; }
+            .preloader { display: none; }
+            html.is-loading { overflow: auto; }
+          `}</style>
         </noscript>
       </head>
       <body>{children}</body>

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Button from "@/components/Button";
 import IndustriesCarousel from "@/components/IndustriesCarousel";
+import Preloader from "@/components/Preloader";
 import ServicesTabs from "@/components/ServicesTabs";
 import SiteFooter from "@/components/SiteFooter";
 import Reveal from "@/components/Reveal";
@@ -9,6 +10,7 @@ import SiteHeader from "@/components/SiteHeader";
 export default function Home() {
   return (
     <div className="page">
+      <Preloader />
       <SiteHeader />
 
       <section
