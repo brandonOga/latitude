@@ -49,22 +49,26 @@ const SOCIALS = [
 export default function SiteFooter() {
   return (
     <footer className="site-footer">
-      <div id="contact" className="footer-main">
+      <div id="contact" className="footer-main" data-reveal-group>
         <Image
           src="/assets/photo-finance.jpg"
           alt=""
           fill
           sizes="100vw"
           className="cover footer-bg"
+          data-reveal="clip-up"
         />
         <div className="footer-scrim" />
         <div className="container footer-content">
           <div className="footer-contact">
-            <h2 className="footer-title">Get in Touch</h2>
+            {/* Starts while the background is still wiping in */}
+            <h2 className="footer-title" data-reveal="mask" data-reveal-at="0.4">
+              Get in Touch
+            </h2>
 
             <div className="channels">
               {CHANNELS.map(({ icon: Icon, title, label, href }) => (
-                <a key={title} href={href} className="channel">
+                <a key={title} href={href} className="channel" data-reveal="up">
                   <Icon className="channel-icon" aria-hidden="true" />
                   <h3 className="channel-title h6">{title}</h3>
                   <span className="channel-label">{label}</span>
@@ -72,10 +76,18 @@ export default function SiteFooter() {
               ))}
             </div>
 
-            <h3 className="socials-title h4">Find us on social media</h3>
+            <h3 className="socials-title h4" data-reveal="mask">
+              Find us on social media
+            </h3>
             <div className="socials">
               {SOCIALS.map(({ icon: Icon, label, href }) => (
-                <a key={label} href={href} className="social" aria-label={label}>
+                <a
+                  key={label}
+                  href={href}
+                  className="social"
+                  aria-label={label}
+                  data-reveal="up"
+                >
                   <Icon aria-hidden="true" />
                 </a>
               ))}

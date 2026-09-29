@@ -73,6 +73,8 @@ export default function IndustriesCarousel() {
               key={`${copy}-${name}`}
               className="carousel-slide"
               aria-hidden={copy !== 1 || undefined}
+              // Only the middle copy is on screen at load, so only it animates
+              data-reveal={copy === 1 ? "clip-up" : undefined}
             >
               <Image src={img} alt="" fill sizes="440px" className="cover" />
               <div className="slide-overlay">
@@ -100,6 +102,7 @@ export default function IndustriesCarousel() {
             className="carousel-arrow"
             aria-label="Previous industry"
             onClick={() => go(-1)}
+            data-reveal="up"
           >
             <FaArrowLeft aria-hidden="true" />
           </button>
@@ -108,6 +111,7 @@ export default function IndustriesCarousel() {
             className="carousel-arrow"
             aria-label="Next industry"
             onClick={() => go(1)}
+            data-reveal="up"
           >
             <FaArrowRight aria-hidden="true" />
           </button>

@@ -45,9 +45,12 @@ export default function SiteHeader() {
   }, []);
 
   return (
-    <header className={scrolled ? "site-header is-scrolled" : "site-header"}>
+    <header
+      className={scrolled ? "site-header is-scrolled" : "site-header"}
+      data-reveal-group="entrance"
+    >
       <div className="container header-inner">
-        <a href="#top" className="brand">
+        <a href="#top" className="brand" data-reveal="down">
           <Image
             src="/assets/latitude-mark.png"
             alt="Latitude logo"
@@ -61,7 +64,7 @@ export default function SiteHeader() {
             <span className="brand-sub">Zimbabwe Financial Advisory</span>
           </div>
         </a>
-        <nav className="nav">
+        <nav className="nav" data-reveal="down">
           {NAV.map(({ label, href }) => (
             <a
               key={href}
@@ -73,7 +76,7 @@ export default function SiteHeader() {
             </a>
           ))}
         </nav>
-        <Button href="#contact" size="sm">
+        <Button href="#contact" size="sm" data-reveal="down">
           Book a consultation
         </Button>
       </div>

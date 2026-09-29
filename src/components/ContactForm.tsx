@@ -28,7 +28,13 @@ export default function ContactForm() {
   }
 
   return (
-    <form className="enquiry" onSubmit={handleSubmit}>
+    <form
+      className="enquiry"
+      onSubmit={handleSubmit}
+      // Runs alongside the heading rather than waiting for every card
+      data-reveal="right"
+      data-reveal-at="0.6"
+    >
       {sent ? (
         <div className="enquiry-thanks">
           <div className="enquiry-thanks-title h4">Thank you.</div>
