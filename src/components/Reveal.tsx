@@ -84,10 +84,14 @@ function addToTimeline(
     return split;
   }
 
+  // Blocks and images use fromTo with explicit end values, so they always
+  // land in the right place whatever styles the element currently has
+
   if (Object.hasOwn(SLIDES, kind)) {
-    tl.from(
+    tl.fromTo(
       el,
-      { ...SLIDES[kind as Slide], opacity: 0, duration: 1, ease: "power3.out" },
+      { ...SLIDES[kind as Slide], opacity: 0 },
+      { x: 0, y: 0, opacity: 1, duration: 1, ease: "power3.out" },
       at,
     );
     return null;
@@ -95,9 +99,16 @@ function addToTimeline(
 
   // Clip reveal. The photo inside (or the element itself, if it's the img)
   // eases out of a zoom at the same time.
-  tl.from(el, { clipPath: CLIPS[kind as Clip], duration: 1.2, ease: "power3.inOut" }, at);
+  tl.fromTo(
+    el,
+    { clipPath: CLIPS[kind as Clip] },
+    { clipPath: "inset(0% 0% 0% 0%)", duration: 1.2, ease: "power3.inOut" },
+    at,
+  );
   const img = el instanceof HTMLImageElement ? el : el.querySelector("img");
-  if (img) tl.from(img, { scale: 1.25, duration: 1.6, ease: "power3.out" }, "<");
+  if (img) {
+    tl.fromTo(img, { scale: 1.25 }, { scale: 1, duration: 1.6, ease: "power3.out" }, "<");
+  }
   return null;
 }
 
@@ -116,9 +127,13 @@ function revealGroup(group: HTMLElement) {
   let splits: SplitText[] = [];
   let done = false;
 
+  // revert(), not kill(): kill() leaves the from() start values (opacity 0,
+  // offsets, clips) inline, and a rebuild would then animate from them to
+  // themselves, so nothing would move
   const teardown = () => {
     tl?.scrollTrigger?.kill();
-    tl?.kill();
+    tl?.revert();
+    tl = null;
     splits.forEach((s) => s.revert());
     splits = [];
   };
@@ -194,6 +209,10 @@ export default function Reveal() {
         .map(revealGroup);
       return () => cleanups.forEach((cleanup) => cleanup());
     });
+
+    // Explicitly tear everything down on unmount (Strict Mode and hot reload
+    // remount this), so stale groups never keep building in the background
+    return () => mm.revert();
   });
 
   return null;
