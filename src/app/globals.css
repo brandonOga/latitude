@@ -3,7 +3,9 @@
 :root {
   --navy: #0b1f3f;
   --navy-2: #123a6e;
-  --paper: #f6f4ef;
+  /* Light blue at 8% over white, mixed to a solid colour (≈ #eceff3) so
+     stacked sections don't compound the tint */
+  --paper: color-mix(in srgb, var(--navy-2) 8%, #fff);
   --paper-2: #ece8df;
   --paper-hover: #eeebe3;
   --rule: #dcd8ce;
@@ -74,6 +76,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* Stop anchor links landing underneath the sticky header */
+  scroll-padding-top: 80px;
 }
 
 body {
@@ -289,13 +293,21 @@ h6 em, .h6 em {
 
 /* ---------- Header ---------- */
 
+/* Sticky, solid header that tightens up once scrolling starts */
 .site-header {
-  background: var(--paper);
-  border-bottom: 1px solid var(--rule);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #fff;
+}
+
+.site-header.is-scrolled .header-inner {
+  padding-block: 8px;
 }
 
 .header-inner {
   padding-block: 20px;
+  transition: padding-block 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -318,6 +330,11 @@ h6 em, .h6 em {
   height: 50px;
   width: auto;
   mix-blend-mode: multiply;
+  transition: height 0.3s ease;
+}
+
+.site-header.is-scrolled .logo {
+  height: 36px;
 }
 
 .brand-text {
@@ -350,7 +367,8 @@ h6 em, .h6 em {
   transition: color 0.2s;
 }
 
-.nav a:hover {
+.nav a:hover,
+.nav a.is-active {
   color: var(--navy-2);
   text-decoration: underline;
   text-decoration-thickness: 3px;
@@ -685,7 +703,9 @@ h6 em, .h6 em {
 
 .slide-num {
   font-family: var(--mono);
-  color: var(--gold);
+  font-size: clamp(24px, 2.4vw, 36px);
+  line-height: 1;
+  color: #fff;
 }
 
 .slide-title {
@@ -794,14 +814,35 @@ h6 em, .h6 em {
 .enquiry-fields {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 36px;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  font-weight: 500;
+  min-width: 0;
+}
+
+/* Side-by-side fields; stacks when the form gets too narrow for two */
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: 36px 24px;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: #6b7389;
+  opacity: 1;
+}
+
+/* Grey the select like a placeholder until a real option is chosen */
+.field select:invalid {
+  color: #6b7389;
+}
+
+.field select option {
+  color: var(--navy);
 }
 
 .field input,
