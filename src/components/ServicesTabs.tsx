@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { SERVICES, pad } from "@/lib/content";
+import Button from "@/components/Button";
+import { SERVICES } from "@/lib/content";
 
 export default function ServicesTabs() {
   const [active, setActive] = useState(SERVICES[0].key);
@@ -38,8 +39,6 @@ export default function ServicesTabs() {
         aria-labelledby={`tab-${panel.key}`}
         className="panel"
       >
-        <h3 className="panel-title">{panel.title}</h3>
-        <p className="panel-intro">{panel.intro}</p>
         <div className="panel-grid">
           <div className="panel-media">
             <Image
@@ -51,13 +50,16 @@ export default function ServicesTabs() {
               className={`cover panel-img panel-img--${panel.key}`}
             />
           </div>
-          <div className="offer-list">
-            {panel.items.map((text, i) => (
-              <div key={text} className="offer">
-                <div className="offer-num">{pad(i + 1)}</div>
-                <div className="offer-text">{text}</div>
-              </div>
-            ))}
+          <div className="panel-copy">
+            <h4 className="panel-title">{panel.title}</h4>
+            <ul className="offer-list">
+              {panel.items.map((text) => (
+                <li key={text}>{text}</li>
+              ))}
+            </ul>
+            <Button href="#contact" variant="light" className="panel-cta">
+              Enquire Now
+            </Button>
           </div>
         </div>
       </div>

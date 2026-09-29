@@ -66,13 +66,13 @@ export default function SiteFooter() {
               {CHANNELS.map(({ icon: Icon, title, label, href }) => (
                 <a key={title} href={href} className="channel">
                   <Icon className="channel-icon" aria-hidden="true" />
-                  <h3 className="channel-title">{title}</h3>
+                  <h3 className="channel-title h6">{title}</h3>
                   <span className="channel-label">{label}</span>
                 </a>
               ))}
             </div>
 
-            <h3 className="socials-title">Find us on social media</h3>
+            <h3 className="socials-title h4">Find us on social media</h3>
             <div className="socials">
               {SOCIALS.map(({ icon: Icon, label, href }) => (
                 <a key={label} href={href} className="social" aria-label={label}>
@@ -88,7 +88,7 @@ export default function SiteFooter() {
 
       <div className="footnote">
         <div className="container footnote-inner">
-          <span>© 2026 Latitude Zimbabwe Financial Advisory (Pvt) Ltd</span>
+          <span className="text-base!">© 2026 Latitude Zimbabwe Financial Advisory (Pvt) Ltd</span>
         </div>
       </div>
     </footer>
