@@ -35,6 +35,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${satoshi.variable} ${workSans.variable} ${plexMono.variable}`}
     >
+      <head>
+        {/* Without JavaScript the line reveal never runs, so show the text */}
+        <noscript>
+          <style>{`[data-reveal] { visibility: visible; }`}</style>
+        </noscript>
+      </head>
       <body>{children}</body>
     </html>
   );

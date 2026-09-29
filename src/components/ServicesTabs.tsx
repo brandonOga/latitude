@@ -24,6 +24,7 @@ export default function ServicesTabs() {
               aria-controls={`panel-${s.key}`}
               className={on ? "tab tab--on" : "tab"}
               onClick={() => setActive(s.key)}
+              data-reveal="up"
             >
               <span className="tab-curve tab-curve--l" />
               <span className="tab-curve tab-curve--r" />
@@ -38,9 +39,10 @@ export default function ServicesTabs() {
         id={`panel-${panel.key}`}
         aria-labelledby={`tab-${panel.key}`}
         className="panel"
+        data-reveal="up"
       >
         <div className="panel-grid">
-          <div className="panel-media">
+          <div className="panel-media" data-reveal="clip-left">
             <Image
               key={panel.img}
               src={panel.img}
@@ -50,7 +52,7 @@ export default function ServicesTabs() {
               className={`cover panel-img panel-img--${panel.key}`}
             />
           </div>
-          <div className="panel-copy">
+          <div className="panel-copy" data-reveal="right">
             <h4 className="panel-title">{panel.title}</h4>
             <ul className="offer-list">
               {panel.items.map((text) => (

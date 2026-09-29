@@ -166,6 +166,18 @@ h6, .h6 {
   letter-spacing: 0.03em;
 }
 
+/* Entrance and scroll reveals (Reveal.tsx): hidden until GSAP builds the
+   animation, so nothing flashes in unanimated. Reduced motion skips it. */
+[data-reveal] {
+  visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    visibility: visible;
+  }
+}
+
 /* Satoshi has no italic cut; accents in headings use colour only */
 h1 em, .h1 em,
 h2 em, .h2 em,
