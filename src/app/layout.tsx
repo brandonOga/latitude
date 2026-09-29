@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Inter } from "next/font/google";
+import { IBM_Plex_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 
 const satoshi = localFont({
   variable: "--font-heading",
-  src: "../fonts/Satoshi-Black.woff2",
-  weight: "900",
+  src: "../fonts/Satoshi Medium/Satoshi Medium.woff2",
+  weight: "500",
   style: "normal",
 });
 
-const inter = Inter({
+const workSans = localFont({
   variable: "--font-body",
-  subsets: ["latin"],
+  src: "../fonts/WorkSans-Variable.woff2",
+  weight: "100 900",
+  style: "normal",
 });
 
 const plexMono = IBM_Plex_Mono({
@@ -31,7 +33,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${satoshi.variable} ${inter.variable} ${plexMono.variable}`}
+      className={`${satoshi.variable} ${workSans.variable} ${plexMono.variable}`}
     >
       <body>{children}</body>
     </html>

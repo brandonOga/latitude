@@ -52,18 +52,43 @@ export const SERVICES: Service[] = [
       "Build responsive websites using WordPress, Elementor, HTML, CSS, JavaScript and other front-end technologies.",
       "Build and edit WordPress websites using Elementor Pro, JetEngine, JetSmartFilters, JetFormBuilder and WPML.",
       "Build and customise Shopify websites including shopfront layouts, content and user experience.",
-      "Work with clients and project teams to understand requirements and solve design and technical problems.",
-      "Participate in projects from planning through UX design, development, testing and continuous improvement.",
     ],
   },
 ];
 
+// TODO: replace the placeholder photos with industry-specific images,
+// and review the descriptions.
 export const INDUSTRIES = [
-  "Financial Services",
-  "Technology, Media & Telecoms",
-  "Real Estate, Building & Infrastructure",
-  "Energy & Resources",
-  "Government & Public Sector",
+  {
+    name: "Financial Services",
+    img: "/assets/photo-finance.jpg",
+    description:
+      "Risk, regulatory reporting and actuarial support for banks, insurers, pension funds and microfinance institutions.",
+  },
+  {
+    name: "Technology, Media & Telecoms",
+    img: "/assets/photo-office.jpg",
+    description:
+      "Financial planning, systems implementation and growth strategy for fast-moving tech and telecoms businesses.",
+  },
+  {
+    name: "Real Estate, Building & Infrastructure",
+    img: "/assets/photo-contact.jpg",
+    description:
+      "Project finance, feasibility studies and valuations that keep developments and infrastructure on a sound footing.",
+  },
+  {
+    name: "Energy & Resources",
+    img: "/assets/photo-actuarial.jpg",
+    description:
+      "Modelling, cost control and risk management for mining, energy and agricultural operations.",
+  },
+  {
+    name: "Government & Public Sector",
+    img: "/assets/photo-team.jpg",
+    description:
+      "Public finance management, digital transformation and pension scheme advisory for public institutions.",
+  },
 ];
 
 export const pad = (n: number) => String(n).padStart(2, "0");
