@@ -8,7 +8,7 @@ import { isPreloaderDone, markPreloaderDone } from "@/lib/preloader";
 gsap.registerPlugin(useGSAP);
 
 // One entry per line
-const LINES = ["Latitude Zimbabwe", "Financial Advisory"];
+const LINES = ["SolMerge", "Financial Advisory"];
 
 // Delay between letters. Kept short because the text is long: with 33
 // letters, the rise and drop each take ~1s end to end.

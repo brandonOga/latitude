@@ -1,6 +1,6 @@
-# Latitude Zimbabwe Financial Advisory
+# SolMerge Financial Advisory
 
-Marketing site for Latitude Zimbabwe Financial Advisory — Finance, IT Solutions and Actuarial Services.
+Marketing site for SolMerge Financial Advisory — Finance, IT Solutions and Actuarial Services.
 
 Built with [Next.js](https://nextjs.org) (App Router) and TypeScript.
 

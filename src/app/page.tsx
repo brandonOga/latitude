@@ -66,7 +66,7 @@ export default function Home() {
             <div className="about-photo" data-reveal="clip-left">
               <Image
                 src="/assets/photo-team.jpg"
-                alt="Latitude team collaborating around a desk"
+                alt="SolMerge team collaborating around a desk"
                 fill
                 sizes="(max-width: 960px) 100vw, 50vw"
                 className="cover about-img"
@@ -77,7 +77,7 @@ export default function Home() {
             <h2 className="section-title about-title" data-reveal="mask">About us</h2>
             <div className="about-copy">
               <p className="about-lead" data-reveal>
-                At Latitude Zimbabwe Financial Advisory, we empower businesses
+                At SolMerge Financial Advisory, we empower businesses
                 and individuals to navigate complexity with clarity. As a
                 trusted consultancy, we specialize in Finance, IT Solutions,
                 and Actuarial Services, delivering insights that drive smarter
@@ -94,7 +94,7 @@ export default function Home() {
               </p>
               <p data-reveal>
                 With a commitment to excellence, integrity, and innovation,
-                Latitude Financial Advisory is more than a consultancy. We are
+                SolMerge Financial Advisory is more than a consultancy. We are
                 your strategic ally in building resilience and achieving
                 long-term success.
               </p>

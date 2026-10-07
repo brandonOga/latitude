@@ -27,7 +27,7 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Latitude Zimbabwe Financial Advisory",
+  title: "SolMerge Financial Advisory",
   description:
     "Finance, IT Solutions and Actuarial Services, with insights that drive smarter decisions and sustainable growth.",
 };
