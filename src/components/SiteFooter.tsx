@@ -110,7 +110,8 @@ export default function SiteFooter() {
 
       <div className="footnote">
         <div className="container footnote-inner">
-          <span className="text-base!">© 2026 SolMerge Financial Advisory (Pvt) Ltd</span>
+          <span className="text-sm!">© 2026 SolMerge Financial Advisory (Pvt) Ltd</span>
+          <span className="text-sm!">Design &amp; Code by Brandon</span>
         </div>
       </div>
     </footer>

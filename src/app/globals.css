@@ -1319,5 +1319,17 @@ html.menu-open {
 .footnote-inner {
   padding-top: 12px;
   padding-bottom: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 24px;
   text-align: center;
+}
+
+/* Stacked and centred once the two lines no longer fit side by side */
+@media (max-width: 639px) {
+  .footnote-inner {
+    flex-direction: column;
+    align-items: center;
+  }
 }
