@@ -121,6 +121,44 @@ function kindOf(el: HTMLElement): Kind {
   return "text";
 }
 
+// Adds each item to the timeline in DOM order. Returns the text splits made.
+function addItems(tl: gsap.core.Timeline, items: HTMLElement[]): SplitText[] {
+  const splits: SplitText[] = [];
+  let prev: Kind | null = null;
+  items.forEach((el) => {
+    const kind = kindOf(el);
+    const at = el.dataset.revealAt ?? position(prev, kind);
+    // Hidden in CSS until now, so nothing flashes in unanimated
+    gsap.set(el, { visibility: "visible" });
+    const split = addToTimeline(tl, el, kind, at);
+    if (split) splits.push(split);
+    prev = kind;
+  });
+  return splits;
+}
+
+// Puts text back to normal and drops inline styles, so everything reflows
+// and hovers naturally once its animation has finished
+function settle(items: HTMLElement[], splits: SplitText[]) {
+  splits.forEach((s) => s.revert());
+  items.forEach((el) => {
+    gsap.set([el, ...el.querySelectorAll("img")], {
+      clearProps: "transform,opacity,clipPath",
+    });
+  });
+}
+
+// Plays the [data-reveal] items inside root straight away, the same way a
+// group would. For content swapped in after its group has already played
+// (e.g. a newly opened tab).
+export function playReveal(root: HTMLElement): gsap.core.Timeline {
+  const items = Array.from(root.querySelectorAll<HTMLElement>("[data-reveal]"));
+  let splits: SplitText[] = [];
+  const tl = gsap.timeline({ onComplete: () => settle(items, splits) });
+  splits = addItems(tl, items);
+  return tl;
+}
+
 // Builds and plays one group. Returns a cleanup function.
 function revealGroup(group: HTMLElement) {
   const entrance = group.dataset.revealGroup === "entrance";
@@ -141,7 +179,9 @@ function revealGroup(group: HTMLElement) {
 
   const build = () => {
     teardown();
-    const items = group.querySelectorAll<HTMLElement>("[data-reveal]");
+    const items = Array.from(
+      group.querySelectorAll<HTMLElement>("[data-reveal]"),
+    );
 
     tl = gsap.timeline({
       delay: entrance ? Number(group.dataset.revealDelay) || 0 : 0,
@@ -150,28 +190,12 @@ function revealGroup(group: HTMLElement) {
         : { trigger: group, start: "top 80%", once: true },
       onComplete() {
         done = true;
-        // Put text back to normal and drop inline styles, so everything
-        // reflows and hovers naturally from now on
-        splits.forEach((s) => s.revert());
+        settle(items, splits);
         splits = [];
-        items.forEach((el) => {
-          gsap.set([el, ...el.querySelectorAll("img")], {
-            clearProps: "transform,opacity,clipPath",
-          });
-        });
       },
     });
 
-    let prev: Kind | null = null;
-    items.forEach((el) => {
-      const kind = kindOf(el);
-      const at = el.dataset.revealAt ?? position(prev, kind);
-      // Hidden in CSS until now, so nothing flashes in unanimated
-      gsap.set(el, { visibility: "visible" });
-      const split = addToTimeline(tl!, el, kind, at);
-      if (split) splits.push(split);
-      prev = kind;
-    });
+    splits = addItems(tl, items);
   };
 
   // Line breaks depend on the fonts and the width, so split once fonts are
