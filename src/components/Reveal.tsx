@@ -29,10 +29,22 @@ gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
 //
 // Every [data-reveal] element must sit inside a group: it's hidden in CSS
 // until its group builds.
+//
+// Small screens, where the columns stack, play it differently:
+//   - a scrolled group is too tall to play all at once, so each child waits
+//     until it is itself scrolled into view; children that arrive together
+//     still play as one sequence
+//   - sideways slides and wipes ("left", "right", "clip-left", "clip-right")
+//     come up from below instead: there's no neighbouring column to come in
+//     from, and a sideways offset would make the page scroll sideways
+//   - blocks travel less and text lines follow each other faster
 
 type Slide = "up" | "down" | "left" | "right";
 type Clip = "clip-up" | "clip-down" | "clip-left" | "clip-right";
 type Kind = "text" | Slide | Clip;
+
+// Below the width where the two-column sections stack (see globals.css)
+const isStacked = () => window.matchMedia("(max-width: 959px)").matches;
 
 const SLIDES: Record<Slide, gsap.TweenVars> = {
   up: { y: 60 },
@@ -40,6 +52,22 @@ const SLIDES: Record<Slide, gsap.TweenVars> = {
   left: { x: -80 },
   right: { x: 80 },
 };
+
+// What the sideways animations become once the columns stack
+const STACKED_KINDS: Partial<Record<Kind, Kind>> = {
+  left: "up",
+  right: "up",
+  "clip-left": "clip-up",
+  "clip-right": "clip-up",
+};
+
+// Shorter travel on a small screen
+const STACKED_UP: gsap.TweenVars = { y: 40 };
+
+const LINE_DURATION = 0.6;
+// Delay between text lines. Tighter when stacked: narrow columns wrap into
+// many more lines.
+const lineStagger = (stacked: boolean) => (stacked ? 0.06 : 0.1);
 
 // Starting clip for each wipe, named by the side it comes in from
 const CLIPS: Record<Clip, string> = {
@@ -51,12 +79,14 @@ const CLIPS: Record<Clip, string> = {
 
 // Where each item starts relative to the previous one, so a group plays as
 // one sequence: heading → text → blocks and images.
-function position(prev: Kind | null, kind: Kind): gsap.Position {
+function position(prev: Kind | null, kind: Kind, stacked: boolean): gsap.Position {
   if (prev === null) return 0;
   // Heading into paragraph, or paragraph into paragraph: the next element's
-  // first line follows the previous last line at the same 0.1s rhythm
-  // (0.6s duration - 0.1s), so the text reads as one continuous flow
-  if (prev === "text" && kind === "text") return "-=0.5";
+  // first line follows the previous last line at the same rhythm as the
+  // lines themselves, so the text reads as one continuous flow
+  if (prev === "text" && kind === "text") {
+    return `-=${LINE_DURATION - lineStagger(stacked)}`;
+  }
   // Consecutive blocks and images cascade 0.15s apart
   if (prev !== "text" && kind !== "text") return "<0.15";
   // Otherwise start just before the previous item finishes
@@ -68,6 +98,7 @@ function addToTimeline(
   el: HTMLElement,
   kind: Kind,
   at: gsap.Position,
+  stacked: boolean,
 ): SplitText | null {
   if (kind === "text") {
     // Split by words and lines; each line sits in an overflow-clipped mask
@@ -79,7 +110,13 @@ function addToTimeline(
     });
     tl.from(
       split.lines,
-      { yPercent: 100, opacity: 0, stagger: 0.1, duration: 0.6, ease: "expo.out" },
+      {
+        yPercent: 100,
+        opacity: 0,
+        stagger: lineStagger(stacked),
+        duration: LINE_DURATION,
+        ease: "expo.out",
+      },
       at,
     );
     return split;
@@ -91,8 +128,8 @@ function addToTimeline(
   if (Object.hasOwn(SLIDES, kind)) {
     tl.fromTo(
       el,
-      { ...SLIDES[kind as Slide], opacity: 0 },
-      { x: 0, y: 0, opacity: 1, duration: 1, ease: "power3.out" },
+      { ...(stacked && kind === "up" ? STACKED_UP : SLIDES[kind as Slide]), opacity: 0 },
+      { x: 0, y: 0, opacity: 1, duration: stacked ? 0.8 : 1, ease: "power3.out" },
       at,
     );
     return null;
@@ -113,24 +150,29 @@ function addToTimeline(
   return null;
 }
 
-function kindOf(el: HTMLElement): Kind {
+function kindOf(el: HTMLElement, stacked: boolean): Kind {
   const value = el.dataset.reveal ?? "";
   if (Object.hasOwn(SLIDES, value) || Object.hasOwn(CLIPS, value)) {
-    return value as Kind;
+    const kind = value as Kind;
+    return (stacked && STACKED_KINDS[kind]) || kind;
   }
   return "text";
 }
 
 // Adds each item to the timeline in DOM order. Returns the text splits made.
 function addItems(tl: gsap.core.Timeline, items: HTMLElement[]): SplitText[] {
+  const stacked = isStacked();
   const splits: SplitText[] = [];
   let prev: Kind | null = null;
   items.forEach((el) => {
-    const kind = kindOf(el);
-    const at = el.dataset.revealAt ?? position(prev, kind);
+    const kind = kindOf(el, stacked);
+    // data-reveal-at is relative to what plays before it, so it means nothing
+    // on an item that opens the timeline (as it can when stacked)
+    const at =
+      (prev !== null && el.dataset.revealAt) || position(prev, kind, stacked);
     // Hidden in CSS until now, so nothing flashes in unanimated
     gsap.set(el, { visibility: "visible" });
-    const split = addToTimeline(tl, el, kind, at);
+    const split = addToTimeline(tl, el, kind, at, stacked);
     if (split) splits.push(split);
     prev = kind;
   });
@@ -152,7 +194,11 @@ function settle(items: HTMLElement[], splits: SplitText[]) {
 // group would. For content swapped in after its group has already played
 // (e.g. a newly opened tab).
 export function playReveal(root: HTMLElement): gsap.core.Timeline {
-  const items = Array.from(root.querySelectorAll<HTMLElement>("[data-reveal]"));
+  // Anything still hidden hasn't been scrolled to yet (stacked layout), and
+  // will play when it is
+  const items = Array.from(
+    root.querySelectorAll<HTMLElement>("[data-reveal]"),
+  ).filter((el) => getComputedStyle(el).visibility !== "hidden");
   let splits: SplitText[] = [];
   const tl = gsap.timeline({ onComplete: () => settle(items, splits) });
   splits = addItems(tl, items);
@@ -166,6 +212,13 @@ function revealGroup(group: HTMLElement) {
   let splits: SplitText[] = [];
   let done = false;
 
+  // Stacked layout only: the triggers still waiting for their item, the items
+  // that have already played, and the timelines (with their text splits)
+  // still playing
+  let waiting: ScrollTrigger[] = [];
+  const played = new Set<HTMLElement>();
+  const playing = new Map<gsap.core.Timeline, SplitText[]>();
+
   // revert(), not kill(): kill() leaves the from() start values (opacity 0,
   // offsets, clips) inline, and a rebuild would then animate from them to
   // themselves, so nothing would move
@@ -175,6 +228,25 @@ function revealGroup(group: HTMLElement) {
     tl = null;
     splits.forEach((s) => s.revert());
     splits = [];
+    waiting.forEach((trigger) => trigger.kill());
+    waiting = [];
+  };
+
+  // Plays the items that have just been scrolled into view as one sequence
+  const playBatch = (items: HTMLElement[], entered: Element[]) => {
+    // In DOM order, whatever order the triggers fired in
+    const batch = items.filter((el) => entered.includes(el) && !played.has(el));
+    if (!batch.length) return;
+    batch.forEach((el) => played.add(el));
+    done = played.size === items.length;
+
+    const batchTl = gsap.timeline({
+      onComplete() {
+        settle(batch, playing.get(batchTl) ?? []);
+        playing.delete(batchTl);
+      },
+    });
+    playing.set(batchTl, addItems(batchTl, batch));
   };
 
   const build = () => {
@@ -182,6 +254,20 @@ function revealGroup(group: HTMLElement) {
     const items = Array.from(
       group.querySelectorAll<HTMLElement>("[data-reveal]"),
     );
+
+    // Stacked: every item waits for its own turn on screen. Text is split as
+    // it plays, so nothing here depends on the width.
+    if (!entrance && isStacked()) {
+      waiting = ScrollTrigger.batch(
+        items.filter((el) => !played.has(el)),
+        {
+          start: "top 90%",
+          once: true,
+          onEnter: (entered) => playBatch(items, entered),
+        },
+      );
+      return;
+    }
 
     tl = gsap.timeline({
       delay: entrance ? Number(group.dataset.revealDelay) || 0 : 0,
@@ -195,11 +281,16 @@ function revealGroup(group: HTMLElement) {
       },
     });
 
-    splits = addItems(tl, items);
+    // Leaves out anything that already played while the layout was stacked
+    splits = addItems(
+      tl,
+      items.filter((el) => !played.has(el)),
+    );
   };
 
   // Line breaks depend on the fonts and the width, so split once fonts are
-  // ready, and re-split if the width changes before the group has played
+  // ready, and re-split if the width changes before the group has played.
+  // That also switches between the stacked and side-by-side behaviour.
   let alive = true;
   let width = window.innerWidth;
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -222,6 +313,11 @@ function revealGroup(group: HTMLElement) {
     clearTimeout(timer);
     window.removeEventListener("resize", onResize);
     teardown();
+    playing.forEach((batchSplits, batchTl) => {
+      batchTl.revert();
+      batchSplits.forEach((s) => s.revert());
+    });
+    playing.clear();
   };
 }
 
