@@ -21,8 +21,8 @@ export default function SiteHeader() {
   const headerRef = useRef<HTMLElement>(null);
 
   // Measure the header once on load and expose it as --header-h, so the hero
-  // can fill the rest of the screen. The bar's height doesn't change on
-  // scroll (only the hanging logo shrinks), so there's no need to re-measure.
+  // can fill the rest of the screen. This runs before the
+  // scrolled state is applied, so it's always the full-height bar.
   useEffect(() => {
     const height = headerRef.current?.offsetHeight;
     if (height) {
@@ -50,7 +50,8 @@ export default function SiteHeader() {
 
   useEffect(() => {
     const update = () => {
-      setScrolled(window.scrollY > 8);
+      // Past the most the bar shrinks by, so the hero is already under it
+      setScrolled(window.scrollY > 24);
 
       // Active section: the last one whose top has passed 40% down the
       // viewport. At the very bottom, the last section wins even if it's
@@ -91,11 +92,11 @@ export default function SiteHeader() {
         {/* The logo image already includes the name and tagline */}
         <a href="#top" className="brand" data-reveal="down">
           <Image
-            src="/assets/latitude-logo.jpeg"
-            alt="Latitude Zimbabwe Financial Advisory"
-            width={1254}
-            height={1254}
-            sizes="150px"
+            src="/assets/SolMerge-logo.jpeg"
+            alt="SolMerge Financial Advisory"
+            width={1190}
+            height={504}
+            sizes="170px"
             className="logo"
             priority
           />

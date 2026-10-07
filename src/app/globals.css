@@ -207,7 +207,7 @@ html.is-loading {
   background: var(--paper);
 }
 
-/* Always two centred lines ("Latitude Zimbabwe" / "Financial Advisory"),
+/* Always two centred lines ("SolMerge" / "Financial Advisory"),
    sized off the screen width so the longer line always fits */
 .preloader-text {
   display: flex;
@@ -401,28 +401,30 @@ h6 em, .h6 em {
   background: #fff;
 }
 
-/* The header bar is sized by the nav and button only; the logo hangs from its
-   top edge as a tab and overlaps the top of the hero. Change the sizes here. */
+/* The logo sits inside the header bar and sets its height. Change the
+   sizes here. */
 .site-header {
-  --header-pad: 20px;
-  --logo-size: 120px;
-  --logo-pad-x: 20px; /* white space either side of the logo */
+  --header-pad: 12px;
+  --logo-size: 72px; /* logo height */
+  --logo-ratio: 2.36; /* logo image width / height (1190 x 504) */
+  --logo-shrink: 0px; /* how much shorter the logo gets once scrolled */
+  /* Gives back the height the bar loses as it shrinks, so the page below
+     doesn't move */
+  margin-bottom: var(--logo-shrink);
+  transition: margin-bottom 0.3s ease;
 }
 
 .site-header.is-scrolled {
-  --logo-size: 88px;
-  --logo-pad-x: 12px;
+  --logo-shrink: 20px;
 }
 
 @media (max-width: 639px) {
   .site-header {
-    --logo-size: 96px;
-    --logo-pad-x: 12px;
+    --logo-size: 56px;
   }
 
   .site-header.is-scrolled {
-    --logo-size: 64px;
-    --logo-pad-x: 8px;
+    --logo-shrink: 12px;
   }
 }
 
@@ -436,31 +438,20 @@ h6 em, .h6 em {
   flex-wrap: wrap;
 }
 
-/* A slot the width of the logo that doesn't add to the header's height */
 .brand {
-  position: relative;
   flex-shrink: 0;
-  align-self: stretch;
-  width: calc(var(--logo-size) + 2 * var(--logo-pad-x));
+  display: flex;
   color: var(--navy);
-  transition: width 0.3s ease;
 }
 
 .brand:hover {
   text-decoration: none;
 }
 
-/* Square stacked lockup (mark + name + tagline in one image). Hangs from the
-   header's top edge and overflows below it, over the hero. */
+/* Wide lockup (mark + name + tagline in one image) */
 .logo {
-  position: absolute;
-  top: calc(-1 * var(--header-pad));
-  left: 0;
-  /* Widened by the side padding so the image itself stays square */
-  width: calc(var(--logo-size) + 2 * var(--logo-pad-x));
-  height: var(--logo-size);
-  padding-inline: var(--logo-pad-x);
-  background: #fff;
+  width: calc((var(--logo-size) - var(--logo-shrink)) * var(--logo-ratio));
+  height: calc(var(--logo-size) - var(--logo-shrink));
   transition: width 0.3s ease, height 0.3s ease;
 }
 
@@ -604,13 +595,13 @@ html.menu-open {
 /* ---------- Hero ---------- */
 
 /* Fills the screen below the header. --header-h is measured once on load
-   by SiteHeader; 85px is the fallback until then. svh is the viewport
+   by SiteHeader; 96px is the fallback until then. svh is the viewport
    height with mobile browser bars showing, and it never changes as they
    hide, so the hero doesn't jump. min-height lets content grow it on very
    short screens. */
 .hero {
   position: relative;
-  min-height: calc(100svh - var(--header-h, 85px));
+  min-height: calc(100svh - var(--header-h, 96px));
   display: flex;
   align-items: center;
   overflow: hidden;

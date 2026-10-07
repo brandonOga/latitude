@@ -26,8 +26,8 @@ const CHANNELS = [
   {
     icon: FaEnvelope,
     title: "Send an email",
-    label: "info.latitude@gmail.com",
-    href: "mailto:info.latitude@gmail.com",
+    label: "info@solmerge.com",
+    href: "mailto:info@solmerge.com",
   },
   {
     icon: FaLocationDot,
@@ -66,7 +66,17 @@ export default function SiteFooter() {
 
             <div className="channels">
               {CHANNELS.map(({ icon: Icon, title, label, href }) => (
-                <a key={title} href={href} className="channel" data-reveal="up">
+                <a
+                  key={title}
+                  href={href}
+                  className="channel"
+                  data-reveal="up"
+                  // Web links only: tel: and mailto: would leave a blank tab
+                  {...(href.startsWith("http") && {
+                    target: "_blank",
+                    rel: "noopener noreferrer",
+                  })}
+                >
                   <Icon className="channel-icon" aria-hidden="true" />
                   <h3 className="channel-title h6">{title}</h3>
                   <span className="channel-label">{label}</span>
@@ -85,6 +95,8 @@ export default function SiteFooter() {
                   className="social"
                   aria-label={label}
                   data-reveal="up"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <Icon aria-hidden="true" />
                 </a>
@@ -98,7 +110,7 @@ export default function SiteFooter() {
 
       <div className="footnote">
         <div className="container footnote-inner">
-          <span className="text-base!">© 2026 Latitude Zimbabwe Financial Advisory (Pvt) Ltd</span>
+          <span className="text-base!">© 2026 SolMerge Financial Advisory (Pvt) Ltd</span>
         </div>
       </div>
     </footer>
